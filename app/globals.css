@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-codeforge-dark text-white antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-codeforge-green hover:bg-codeforge-green-dark text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-codeforge-dark-light hover:bg-slate-700 text-white font-semibold py-3 px-8 rounded-lg border border-slate-600 transition-all duration-200 hover:border-slate-500;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-codeforge-green to-codeforge-cyan bg-clip-text text-transparent;
+  }
+
+  .feature-card {
+    @apply bg-codeforge-dark-light border border-slate-700 rounded-xl p-6 hover:border-codeforge-green transition-all duration-300 hover:shadow-lg hover:shadow-codeforge-green/10;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
