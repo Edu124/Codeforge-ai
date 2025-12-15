@@ -8,17 +8,28 @@ export default function Home() {
   const handleDownload = (platform: string) => {
     // TODO: Replace with your actual GitHub release download link
     const links: { [key: string]: string } = {
-      'Windows': 'https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/offline-code-assistant_0.1.0_x64_en-US.msi',
+      'Windows': 'https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/offline-code-assistant_0.1.0_x64-setup.exe',
       'Mac': '#', // Coming soon
     }
     
     const url = links[platform]
     if (url && url !== '#') {
-      window.location.href = url
-    } else {
-      alert('Coming soon for ' + platform)
-    }
+    // Create invisible link and click it (forces download)
+     const a = document.createElement('a')
+     a.href = url
+     a.download = 'CodeForge-AI-Setup.msi' // Friendly filename
+     document.body.appendChild(a)
+     a.click()
+     document.body.removeChild(a)
+
+    // Show success message
+    setTimeout(() => {
+      alert('✅ Download started! Check your Downloads folder.\n\nFile: CodeForge-AI-Setup.msi (~75MB)')
+    }, 500)
+  } else {
+    alert('Coming soon for ' + platform + '!')
   }
+}
 
   const handleNotify = (e: React.FormEvent) => {
     e.preventDefault()
@@ -542,7 +553,7 @@ export default function Home() {
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-sm text-slate-400">
                 <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
-                <li><a href="https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/offline-code-assistant_0.1.0_x64_en-US.msi" target="_blank" className="hover:text-white transition-colors">GitHub</a></li>
+                <li><a href="https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/offline-code-assistant_0.1.0_x64-setup.exe" target="_blank" className="hover:text-white transition-colors">GitHub</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Report Bug</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
               </ul>
