@@ -3,7 +3,11 @@
 import { useState } from 'react'
 
 export default function Home() {
-  const [email, setEmail] = useState('')
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    message: ''
+  })
 
   const handleDownload = (platform: string) => {
     // TODO: Replace with your actual GitHub release download link
@@ -14,27 +18,17 @@ export default function Home() {
     
     const url = links[platform]
     if (url && url !== '#') {
-    // Create invisible link and click it (forces download)
-     const a = document.createElement('a')
-     a.href = url
-     a.download = 'CodeForge-AI-Setup.msi' // Friendly filename
-     document.body.appendChild(a)
-     a.click()
-     document.body.removeChild(a)
-
-    // Show success message
-    setTimeout(() => {
-      alert('✅ Download started! Check your Downloads folder.\n\nFile: CodeForge-AI-Setup.msi (~75MB)')
-    }, 500)
-  } else {
-    alert('Coming soon for ' + platform + '!')
+      window.location.href = url
+    } else {
+      alert('Coming soon for ' + platform)
+    }
   }
-}
 
-  const handleNotify = (e: React.FormEvent) => {
+  const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    alert('Thanks! We\'ll notify you when available.')
-    setEmail('')
+    // TODO: Implement your contact form submission logic here
+    alert(`Thanks ${contactForm.name}! Our team will get in touch with you soon at ${contactForm.email}`)
+    setContactForm({ name: '', email: '', message: '' })
   }
 
   return (
@@ -49,10 +43,10 @@ export default function Home() {
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-slate-300 hover:text-white transition-colors">Features</a>
             <a href="#how-it-works" className="text-slate-300 hover:text-white transition-colors">How It Works</a>
-            <a href="#setup" className="text-slate-300 hover:text-white transition-colors">Setup</a>
+            <a href="#setup" className="text-slate-300 hover:text-white transition-colors">Get Started</a>
             <a href="#faq" className="text-slate-300 hover:text-white transition-colors">FAQ</a>
             <button onClick={() => handleDownload('Windows')} className="btn-primary text-sm py-2 px-6">
-              Download Free
+              Download
             </button>
           </div>
         </div>
@@ -71,20 +65,11 @@ export default function Home() {
             Code Assistant
           </h1>
           
-          <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto animate-slide-up">
-            Code faster with AI. <span className="text-codeforge-green font-semibold">100% private</span>, works offline, completely free.
+          <p className="text-xl md:text-2xl text-slate-300 mb-12 max-w-3xl mx-auto animate-slide-up">
+            Code faster with AI. <span className="text-codeforge-green font-semibold">100% private</span>, works offline.
             <br />
             Generate code, write SQL, and get instant AI help.
           </p>
-
-          {/* Big FREE badge */}
-          <div className="inline-flex items-center gap-3 bg-codeforge-green/10 border-2 border-codeforge-green rounded-full px-8 py-3 mb-12">
-            <span className="text-3xl">💚</span>
-            <div className="text-left">
-              <div className="text-2xl font-bold text-codeforge-green">100% FREE</div>
-              <div className="text-sm text-slate-300">No subscriptions • No signup • Forever</div>
-            </div>
-          </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 animate-slide-up">
             <button onClick={() => handleDownload('Windows')} className="btn-primary flex items-center justify-center gap-2 text-lg py-4 px-10">
@@ -120,23 +105,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Free Section */}
+      {/* Why CodeForge Section */}
       <section className="py-20 px-6 bg-codeforge-dark-light">
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Why is it Free?
+            Why CodeForge AI?
           </h2>
           <p className="text-xl text-slate-300 mb-12 max-w-3xl mx-auto">
-            We believe AI coding tools should be accessible to everyone.
-            <br />
-            No subscriptions. No hidden costs. Just powerful AI at your fingertips.
+            Powerful AI coding assistance with privacy and performance.
           </p>
           
           <div className="grid md:grid-cols-4 gap-6">
             {[
-              { icon: '🔒', title: '100% Private', desc: 'Your code never leaves your machine in offline mode' },
-              { icon: '💰', title: 'Always Free', desc: 'No monthly fees, no trials, no credit cards' },
-              { icon: '⚡', title: 'Fast & Powerful', desc: 'Generate code in seconds, not minutes' },
+              { icon: '🔒', title: '100% Private', desc: 'Your code never leaves your machine' },
+              { icon: '💰', title: 'No Subscriptions', desc: 'Download once, use unlimited' },
+              { icon: '⚡', title: 'Fast Generation', desc: 'Generate code in seconds' },
               { icon: '🌍', title: 'Works Offline', desc: 'No internet required for offline mode' },
             ].map((item, i) => (
               <div key={i} className="feature-card text-center">
@@ -166,12 +149,12 @@ export default function Home() {
               {
                 icon: '🔒',
                 title: 'Offline Mode',
-                desc: 'Uses LM Studio locally. 100% private, unlimited, free forever. 60-90 seconds per generation.',
+                desc: 'Uses LM Studio locally. 100% private, unlimited. 60-90 seconds per generation.',
               },
               {
                 icon: '⚡',
                 title: 'Cloud Mode (Optional)',
-                desc: 'Bring your own Claude API key for 2-3 second generation. You pay Anthropic directly (~$0.01/request).',
+                desc: 'Bring your own Claude API key for 2-3 second generation. You pay Anthropic directly.',
               },
               {
                 icon: '💻',
@@ -228,10 +211,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Get Started in 3 Steps
+              How It Works
             </h2>
             <p className="text-xl text-slate-300">
-              Start coding with AI in under 5 minutes
+              Start coding with AI in 3 simple steps
             </p>
           </div>
 
@@ -240,13 +223,13 @@ export default function Home() {
               {
                 step: '1',
                 title: 'Download & Install',
-                desc: 'One-click installer for Windows or Mac. No signup, no email required.',
+                desc: 'One-click installer for Windows or Mac. No signup required.',
                 icon: '📦'
               },
               {
                 step: '2',
                 title: 'Choose Your Mode',
-                desc: 'Offline mode (free, private) or Cloud mode (fast, optional). Your choice.',
+                desc: 'Offline mode (private) or Cloud mode (fast). Your choice.',
                 icon: '⚙️'
               },
               {
@@ -269,162 +252,75 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Setup Guide */}
+      {/* Get Started - Contact Form */}
       <section id="setup" className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Quick Setup Guide
+              Get Started with CodeForge AI
             </h2>
             <p className="text-xl text-slate-300">
-              Two options: Offline (100% free) or Cloud (optional, faster)
+              Need help getting set up? Contact us and our team will get in touch with you
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Offline Setup */}
-            <div className="feature-card border-2 border-codeforge-green">
-              <div className="text-center mb-6">
-                <div className="text-5xl mb-4">🔒</div>
-                <h3 className="text-2xl font-bold mb-2">Offline Mode Setup</h3>
-                <div className="inline-block bg-codeforge-green text-white px-4 py-1 rounded-full text-sm font-bold mb-4">
-                  RECOMMENDED • FREE
-                </div>
+          <div className="feature-card max-w-2xl mx-auto">
+            <form onSubmit={handleContactSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-semibold mb-2">
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  required
+                  value={contactForm.name}
+                  onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+                  className="w-full px-4 py-3 bg-codeforge-dark border border-slate-700 rounded-lg focus:outline-none focus:border-codeforge-green transition-colors"
+                  placeholder="John Doe"
+                />
               </div>
 
-              <div className="space-y-4 text-left">
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-codeforge-green rounded-full flex items-center justify-center text-sm font-bold">
-                    1
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Download CodeForge AI</h4>
-                    <p className="text-sm text-slate-400">Install our desktop app (2 minutes)</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-codeforge-green rounded-full flex items-center justify-center text-sm font-bold">
-                    2
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Install LM Studio</h4>
-                    <p className="text-sm text-slate-400">
-                      Download from{' '}
-                      <a href="https://lmstudio.ai" target="_blank" className="text-codeforge-cyan hover:underline">
-                        lmstudio.ai
-                      </a>
-                      {' '}(5 minutes)
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-codeforge-green rounded-full flex items-center justify-center text-sm font-bold">
-                    3
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Download AI Model</h4>
-                    <p className="text-sm text-slate-400">In LM Studio, search "DeepSeek Coder 1.3B" and download</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-codeforge-green rounded-full flex items-center justify-center text-sm font-bold">
-                    4
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Start Local Server</h4>
-                    <p className="text-sm text-slate-400">Click "Start Server" in LM Studio (port 1234)</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-codeforge-green rounded-full flex items-center justify-center text-sm font-bold">
-                    ✓
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1 text-codeforge-green">Ready to Code!</h4>
-                    <p className="text-sm text-slate-400">100% private, unlimited, free forever</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Cloud Setup */}
-            <div className="feature-card border-2 border-codeforge-cyan">
-              <div className="text-center mb-6">
-                <div className="text-5xl mb-4">⚡</div>
-                <h3 className="text-2xl font-bold mb-2">Cloud Mode Setup</h3>
-                <div className="inline-block bg-codeforge-cyan text-white px-4 py-1 rounded-full text-sm font-bold mb-4">
-                  OPTIONAL • FAST
-                </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-semibold mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  required
+                  value={contactForm.email}
+                  onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                  className="w-full px-4 py-3 bg-codeforge-dark border border-slate-700 rounded-lg focus:outline-none focus:border-codeforge-green transition-colors"
+                  placeholder="john@example.com"
+                />
               </div>
 
-              <div className="space-y-4 text-left">
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-codeforge-cyan rounded-full flex items-center justify-center text-sm font-bold">
-                    1
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Download CodeForge AI</h4>
-                    <p className="text-sm text-slate-400">Install our desktop app (2 minutes)</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-codeforge-cyan rounded-full flex items-center justify-center text-sm font-bold">
-                    2
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Get Claude API Key</h4>
-                    <p className="text-sm text-slate-400">
-                      Sign up at{' '}
-                      <a href="https://console.anthropic.com" target="_blank" className="text-codeforge-cyan hover:underline">
-                        console.anthropic.com
-                      </a>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-codeforge-cyan rounded-full flex items-center justify-center text-sm font-bold">
-                    3
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Add Payment Method</h4>
-                    <p className="text-sm text-slate-400">Add $5-10 credits to your Anthropic account</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-codeforge-cyan rounded-full flex items-center justify-center text-sm font-bold">
-                    4
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Enter API Key</h4>
-                    <p className="text-sm text-slate-400">In CodeForge AI, click Settings and paste your key</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-codeforge-cyan rounded-full flex items-center justify-center text-sm font-bold">
-                    ✓
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1 text-codeforge-cyan">Ready to Code!</h4>
-                    <p className="text-sm text-slate-400">2-3 second generation, ~$0.01 per request</p>
-                  </div>
-                </div>
+              <div>
+                <label htmlFor="message" className="block text-sm font-semibold mb-2">
+                  Message (Optional)
+                </label>
+                <textarea
+                  id="message"
+                  rows={4}
+                  value={contactForm.message}
+                  onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
+                  className="w-full px-4 py-3 bg-codeforge-dark border border-slate-700 rounded-lg focus:outline-none focus:border-codeforge-green transition-colors resize-none"
+                  placeholder="Tell us how we can help you..."
+                />
               </div>
 
-              <div className="mt-6 p-4 bg-codeforge-dark rounded-lg border border-slate-700">
-                <p className="text-xs text-slate-400">
-                  <strong className="text-white">Note:</strong> You pay Anthropic directly. 
-                  We don't charge anything. You control your own spending and can set limits.
-                </p>
-              </div>
-            </div>
+              <button
+                type="submit"
+                className="w-full btn-primary py-4 text-lg"
+              >
+                Contact Us
+              </button>
+
+              <p className="text-center text-sm text-slate-400">
+                Our team typically responds within 24 hours
+              </p>
+            </form>
           </div>
         </div>
       </section>
@@ -441,10 +337,6 @@ export default function Home() {
           <div className="space-y-6">
             {[
               {
-                q: 'Is CodeForge AI really 100% free?',
-                a: 'Yes! The offline mode is completely free forever. No trials, no subscriptions, no hidden costs. If you choose to use cloud mode (optional), you pay Anthropic directly for API usage (~$0.01-0.03 per generation), but we don\'t charge anything.'
-              },
-              {
                 q: 'Is my code private and secure?',
                 a: 'Absolutely! When using offline mode, your code never leaves your computer. Everything runs locally on your machine. Even in cloud mode, only your prompts are sent to Claude API - your full codebase stays private on your computer.'
               },
@@ -458,23 +350,11 @@ export default function Home() {
               },
               {
                 q: 'How is this different from GitHub Copilot?',
-                a: 'Unlike Copilot, CodeForge AI works 100% offline (no internet needed), has no monthly subscription ($0 forever), and gives you full control over your privacy. You can use it without sharing your code with any cloud service.'
-              },
-              {
-                q: 'Do I need LM Studio to use this?',
-                a: 'Only if you want to use offline mode. You have two options: (1) Offline mode with LM Studio (free, private, slower) or (2) Cloud mode with your own Claude API key (fast, low cost). Your choice!'
+                a: 'Unlike Copilot, CodeForge AI works 100% offline (no internet needed), and gives you full control over your privacy. You can use it without sharing your code with any cloud service.'
               },
               {
                 q: 'Can I use this commercially?',
-                a: 'Yes! CodeForge AI is free to use for both personal and commercial projects. The code you generate belongs to you. Use it however you want.'
-              },
-              {
-                q: 'How do I get support?',
-                a: 'Join our GitHub community to report bugs, request features, or get help from other users. We\'re actively developing and improving CodeForge AI based on user feedback.'
-              },
-              {
-                q: 'Will this stay free forever?',
-                a: 'Yes! The core offline mode will always be free. We believe AI coding tools should be accessible to everyone. We may add optional premium features in the future, but the free version will always be powerful and fully functional.'
+                a: 'Yes! CodeForge AI can be used for both personal and commercial projects. The code you generate belongs to you. Use it however you want.'
               },
             ].map((faq, i) => (
               <div key={i} className="feature-card">
@@ -496,17 +376,9 @@ export default function Home() {
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Ready to Code Faster?
           </h2>
-          <p className="text-xl text-slate-300 mb-8">
+          <p className="text-xl text-slate-300 mb-12">
             Join developers coding smarter with AI
           </p>
-
-          <div className="inline-flex items-center gap-3 bg-codeforge-green/10 border-2 border-codeforge-green rounded-full px-8 py-3 mb-12">
-            <span className="text-3xl">💚</span>
-            <div className="text-left">
-              <div className="text-2xl font-bold text-codeforge-green">100% FREE FOREVER</div>
-              <div className="text-sm text-slate-300">No subscriptions • No trials • No credit card</div>
-            </div>
-          </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <button onClick={() => handleDownload('Windows')} className="btn-primary flex items-center justify-center gap-2 text-lg py-4 px-10">
@@ -535,7 +407,7 @@ export default function Home() {
                 <span className="font-bold text-lg">CodeForge AI</span>
               </div>
               <p className="text-slate-400 text-sm">
-                Your offline AI code assistant. Code faster, privately, for free.
+                Your offline AI code assistant. Code faster, privately.
               </p>
             </div>
 
@@ -543,7 +415,7 @@ export default function Home() {
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-slate-400">
                 <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#setup" className="hover:text-white transition-colors">Setup Guide</a></li>
+                <li><a href="#setup" className="hover:text-white transition-colors">Get Started</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Download</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
               </ul>
@@ -554,8 +426,8 @@ export default function Home() {
               <ul className="space-y-2 text-sm text-slate-400">
                 <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
                 <li><a href="https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/CodeForge.AI_1.0.0_x64_en-US.msi" target="_blank" className="hover:text-white transition-colors">GitHub</a></li>
+                <li><a href="#setup" className="hover:text-white transition-colors">Contact Us</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Report Bug</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
               </ul>
             </div>
 
@@ -571,7 +443,7 @@ export default function Home() {
 
           <div className="border-t border-slate-800 pt-8 text-center text-sm text-slate-400">
             <p>© 2024 CodeForge AI. All rights reserved. Made with 💚 for developers.</p>
-            <p className="mt-2 text-xs">100% free, open source, and privacy-focused.</p>
+            <p className="mt-2 text-xs">100% privacy-focused offline AI code assistant.</p>
           </div>
         </div>
       </footer>
