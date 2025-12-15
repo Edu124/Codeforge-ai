@@ -24,11 +24,41 @@ export default function Home() {
     }
   }
 
-  const handleContactSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // TODO: Implement your contact form submission logic here
-    alert(`Thanks ${contactForm.name}! Our team will get in touch with you soon at ${contactForm.email}`)
-    setContactForm({ name: '', email: '', message: '' })
+   const handleContactSubmit = async (e: React.FormEvent) => {
+   e.preventDefault()
+  
+   // Show loading state (optional)
+   const submitButton = e.currentTarget.querySelector('button[type="submit"]') as HTMLButtonElement
+   const originalText = submitButton?.textContent
+   if (submitButton) submitButton.textContent = 'Sending...'
+  
+   try {
+    const response = await fetch('https://formspree.io/f/meoywgny', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: contactForm.name,
+        email: contactForm.email,
+        message: contactForm.message || 'No message provided',
+        _subject: `New Contact from ${contactForm.name}`, // Custom subject line
+      }),
+    })
+
+    if (response.ok) {
+      alert(`Thanks ${contactForm.name}! Our team will get in touch with you soon at ${contactForm.email}.`)
+      setContactForm({ name: '', email: '', message: '' })
+    } else {
+      alert('Oops! Something went wrong. Please try again or email us directly.')
+    }
+   } catch (error) {
+    console.error('Form submission error:', error)
+    alert('Oops! Something went wrong. Please try again or email us directly.')
+   } finally {
+    // Reset button text
+    if (submitButton && originalText) submitButton.textContent = originalText
+   }
   }
 
   return (
