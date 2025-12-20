@@ -90,13 +90,13 @@ export default function Home() {
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
-            Your <span className="gradient-text">Offline</span> AI
+            Your <span className="gradient-text">Private</span> AI
             <br />
             Code Assistant
           </h1>
           
           <p className="text-xl md:text-2xl text-slate-300 mb-12 max-w-3xl mx-auto animate-slide-up">
-            Code faster with AI. <span className="text-codeforge-green font-semibold">100% private</span>, works offline.
+            Code faster with AI. <span className="text-codeforge-green font-semibold">100% private</span>.
             <br />
             Generate code, write SQL, and get instant AI help.
           </p>
@@ -148,9 +148,9 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-6">
             {[
               { icon: '🔒', title: '100% Private', desc: 'Your code never leaves your machine' },
-              { icon: '💰', title: 'No Subscriptions', desc: 'Download once, use unlimited' },
+              { icon: '💰', title: 'Own your software', desc: 'Download once, use unlimited' },
               { icon: '⚡', title: 'Fast Generation', desc: 'Generate code in seconds' },
-              { icon: '🌍', title: 'Works Offline', desc: 'No internet required for offline mode' },
+              { icon: '🌍', title: 'Firewall-safe', desc: 'Firewall-safe operation' },
             ].map((item, i) => (
               <div key={i} className="feature-card text-center">
                 <div className="text-5xl mb-4">{item.icon}</div>
@@ -178,12 +178,12 @@ export default function Home() {
             {[
               {
                 icon: '🔒',
-                title: 'Offline Mode',
-                desc: 'Uses LM Studio locally. 100% private, unlimited. 60-90 seconds per generation.',
+                title: 'Firewall-safe',
+                desc: '100% private, unlimited.1-2 minutes per generation.',
               },
               {
                 icon: '⚡',
-                title: 'Cloud Mode (Optional)',
+                title: 'Cloud Mode',
                 desc: 'Bring your own Claude API key for 2-3 second generation. You pay Anthropic directly.',
               },
               {
@@ -219,7 +219,7 @@ export default function Home() {
               {
                 icon: '💾',
                 title: 'Auto-Save Workspace',
-                desc: 'Your workspace persists across sessions. Just like VS Code.',
+                desc: 'Your workspace persists across sessions.',
               },
             ].map((feature, i) => (
               <div key={i} className="feature-card">
@@ -259,7 +259,7 @@ export default function Home() {
               {
                 step: '2',
                 title: 'Choose Your Mode',
-                desc: 'Offline mode (private) or Cloud mode (fast). Your choice.',
+                desc: 'Firewall-safe mode (private) or Cloud mode (fast). Your choice.',
                 icon: '⚙️'
               },
               {
@@ -368,7 +368,7 @@ export default function Home() {
             {[
               {
                 q: 'Is my code private and secure?',
-                a: 'Absolutely! When using offline mode, your code never leaves your computer. Everything runs locally on your machine. Even in cloud mode, only your prompts are sent to Claude API - your full codebase stays private on your computer.'
+                a: 'Absolutely! When using Firewall-safe mode, your code never leaves your computer. Everything runs locally on your machine. Even in cloud mode, only your prompts are sent to Claude API - your full codebase stays private on your computer.'
               },
               {
                 q: 'Do I need to create an account?',
@@ -380,7 +380,7 @@ export default function Home() {
               },
               {
                 q: 'How is this different from GitHub Copilot?',
-                a: 'Unlike Copilot, CodeForge AI works 100% offline (no internet needed), and gives you full control over your privacy. You can use it without sharing your code with any cloud service.'
+                a: 'Unlike Copilot, CodeForge AI works 100% Firewall-safe, and gives you full control over your privacy. You can use it without sharing your code with any cloud service.'
               },
               {
                 q: 'Can I use this commercially?',
@@ -437,7 +437,7 @@ export default function Home() {
                 <span className="font-bold text-lg">CodeForge AI</span>
               </div>
               <p className="text-slate-400 text-sm">
-                Your offline AI code assistant. Code faster, privately.
+                Your Private AI code assistant. Code faster, privately.
               </p>
             </div>
 
@@ -473,7 +473,7 @@ export default function Home() {
 
           <div className="border-t border-slate-800 pt-8 text-center text-sm text-slate-400">
             <p>© 2024 CodeForge AI. All rights reserved. Made with 💚 for developers.</p>
-            <p className="mt-2 text-xs">100% privacy-focused offline AI code assistant.</p>
+            <p className="mt-2 text-xs">100% privacy-focused AI code assistant.</p>
           </div>
         </div>
       </footer>
