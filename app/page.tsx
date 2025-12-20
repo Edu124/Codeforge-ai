@@ -12,7 +12,7 @@ export default function Home() {
   const handleDownload = (platform: string) => {
     // TODO: Replace with your actual GitHub release download link
     const links: { [key: string]: string } = {
-      'Windows': 'https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/CodeForge.AI_1.0.0_x64_en-US.msi',
+      'Windows': 'https://github.com/Edu124/Codeforge-ai/releases/download/v1.1.0/CodeForge.AI_1.0.0_x64_en-US.msi',
       'Mac': '#', // Coming soon
     }
     
