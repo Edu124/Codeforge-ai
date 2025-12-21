@@ -118,20 +118,6 @@ export default function Home() {
           <p className="text-xs text-slate-500">
             No credit card • No email • No account required
           </p>
-
-          {/* Demo Video Placeholder */}
-          <div className="mt-16 max-w-5xl mx-auto">
-            <div className="relative rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl">
-              <div className="aspect-video bg-gradient-to-br from-codeforge-dark-light to-slate-900 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">▶️</div>
-                  <p className="text-xl text-slate-300">Watch Demo Video</p>
-                  <p className="text-sm text-slate-400 mt-2">(2 minutes)</p>
-                  <p className="text-xs text-slate-500 mt-4">Coming soon - app launching first!</p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
