@@ -12,7 +12,7 @@ export default function Home() {
   const handleDownload = (platform: string) => {
     // TODO: Replace with your actual GitHub release download link
     const links: { [key: string]: string } = {
-      'Windows': 'https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/CodeForge.AI_1.1.0_x64_en-US.msi',
+      'Windows': 'https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/CodeForge-AI-v1.1.0-Portable.zip',
       'Mac': '#', // Coming soon
     }
     
@@ -441,7 +441,7 @@ export default function Home() {
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-sm text-slate-400">
                 <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
-                <li><a href="https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/CodeForge.AI_1.1.0_x64_en-US.msi" target="_blank" className="hover:text-white transition-colors">GitHub</a></li>
+                <li><a href="https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/CodeForge-AI-v1.1.0-Portable.zip" target="_blank" className="hover:text-white transition-colors">GitHub</a></li>
                 <li><a href="#setup" className="hover:text-white transition-colors">Contact Us</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Report Bug</a></li>
               </ul>
