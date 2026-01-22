@@ -10,36 +10,104 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-codeforge-green hover:bg-codeforge-green-dark text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95;
+    @apply bg-codeforge-green hover:bg-codeforge-green-dark text-black font-bold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg shadow-codeforge-green/30 hover:shadow-2xl hover:shadow-codeforge-green/50 hover:scale-105 active:scale-95;
   }
 
   .btn-secondary {
-    @apply bg-codeforge-dark-light hover:bg-slate-700 text-white font-semibold py-3 px-8 rounded-lg border border-slate-600 transition-all duration-200 hover:border-slate-500;
+    @apply bg-black/40 hover:bg-black/60 text-white font-semibold py-3 px-8 rounded-xl border-2 border-slate-700 transition-all duration-300 hover:border-codeforge-green/50 backdrop-blur-sm;
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-codeforge-green to-codeforge-cyan bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-codeforge-green to-emerald-400 bg-clip-text text-transparent;
   }
 
   .feature-card {
-    @apply bg-codeforge-dark-light border border-slate-700 rounded-xl p-6 hover:border-codeforge-green transition-all duration-300 hover:shadow-lg hover:shadow-codeforge-green/10;
+    @apply bg-gradient-to-br from-slate-900/50 to-black/50 border border-slate-800 rounded-2xl p-6 hover:border-codeforge-green/50 transition-all duration-500 hover:shadow-xl hover:shadow-codeforge-green/10 backdrop-blur-sm hover:scale-105;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out;
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.6s ease-out;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+  }
+
+  .delay-500 {
+    animation-delay: 0.5s;
+  }
+
+  .delay-700 {
+    animation-delay: 0.7s;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
   }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: #000000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #475569;
-  border-radius: 5px;
+  background: linear-gradient(180deg, #22c55e, #16a34a);
+  border-radius: 6px;
+  border: 2px solid #000000;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: linear-gradient(180deg, #16a34a, #22c55e);
 }
