@@ -95,7 +95,7 @@ export default function Home() {
   }, [])
 
   const handleDownload = () => {
-    window.location.href = 'https://github.com/bhaveshshahani824-pixel/codeforge/releases/download/v1.0.0/Codeforge.AI_1.0.0_x64-setup.exe'
+    window.location.href = 'https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/Codeforge.AI_0.1.0_x64_en-US.msi'
   }
 
   const handleContactSubmit = async (e: React.FormEvent) => {
