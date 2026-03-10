@@ -1,600 +1,644 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 
+// ── Privacy phrases that whisper across the hero ──────────────────────────────
+const PRIVACY_WHISPERS = [
+  "No one can see your chats.",
+  "Your documents never leave this machine.",
+  "Zero cloud. Zero logs. Zero tracking.",
+  "What you ask stays with you — forever.",
+  "The AI runs here. Not out there.",
+  "Complete silence. Complete privacy.",
+]
+
+// ── Rotating action words in hero ────────────────────────────────────────────
+const ROTATING_WORDS = ['Research', 'Analyze', 'Understand', 'Discover', 'Explore']
+
+// ── FAQ accordion item ────────────────────────────────────────────────────────
+function FAQItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div
+      className={`faq-card cursor-pointer transition-all duration-300 ${open ? 'border-cyan-500/40' : ''}`}
+      onClick={() => setOpen(!open)}
+    >
+      <div className="p-5 flex items-center justify-between gap-4">
+        <h3 className={`font-semibold text-sm md:text-base transition-colors duration-200 ${open ? 'text-cyan-400' : 'text-white'}`}>{q}</h3>
+        <span className={`text-cyan-400 text-xl flex-shrink-0 transition-transform duration-300 ${open ? 'rotate-45' : ''}`}>+</span>
+      </div>
+      {open && (
+        <div className="px-5 pb-5 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
+          {a}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Scroll-reveal wrapper ─────────────────────────────────────────────────────
+function Reveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setVisible(true); observer.disconnect() }
+    }, { threshold: 0.1 })
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(28px)',
+        transition: `opacity 0.75s ease ${delay}ms, transform 0.75s ease ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+// ── Main page ─────────────────────────────────────────────────────────────────
 export default function Home() {
-  const [contactForm, setContactForm] = useState({
-    name: '',
-    email: '',
-    message: ''
-  })
-
-  const [conversationStep, setConversationStep] = useState(0)
-  const [showHero, setShowHero] = useState(false)
+  const [whisperIdx, setWhisperIdx] = useState(0)
+  const [whisperVisible, setWhisperVisible] = useState(true)
+  const [wordIdx, setWordIdx] = useState(0)
+  const [wordVisible, setWordVisible] = useState(true)
+  const [heroReady, setHeroReady] = useState(false)
+  const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' })
+  const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
   useEffect(() => {
-    const timer1 = setTimeout(() => setConversationStep(1), 500)
-    const timer2 = setTimeout(() => setConversationStep(2), 2000)
-    const timer3 = setTimeout(() => setConversationStep(3), 3500)
-    const timer4 = setTimeout(() => setShowHero(true), 4500)
-
-    return () => {
-      clearTimeout(timer1)
-      clearTimeout(timer2)
-      clearTimeout(timer3)
-      clearTimeout(timer4)
-    }
+    const t = setTimeout(() => setHeroReady(true), 200)
+    return () => clearTimeout(t)
   }, [])
 
-  const handleDownload = (platform: string) => {
-    // TODO: Replace with your actual GitHub release download link
-    const links: { [key: string]: string } = {
-      'Windows': 'https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/CodeForge.AI_1.1.0_x64_en-US.msi',
-      'Mac': '#', // Coming soon
-    }
-    
-    const url = links[platform]
-    if (url && url !== '#') {
-      window.location.href = url
-    } else {
-      alert('Coming soon for ' + platform)
-    }
+  useEffect(() => {
+    const id = setInterval(() => {
+      setWhisperVisible(false)
+      setTimeout(() => { setWhisperIdx(i => (i + 1) % PRIVACY_WHISPERS.length); setWhisperVisible(true) }, 500)
+    }, 3500)
+    return () => clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setWordVisible(false)
+      setTimeout(() => { setWordIdx(i => (i + 1) % ROTATING_WORDS.length); setWordVisible(true) }, 350)
+    }, 2200)
+    return () => clearInterval(id)
+  }, [])
+
+  const handleDownload = () => {
+    window.location.href = 'https://github.com/bhaveshshahani824-pixel/codeforge/releases/download/v1.0.0/Codeforge.AI_1.0.0_x64-setup.exe'
   }
 
-   const handleContactSubmit = async (e: React.FormEvent) => {
-   e.preventDefault()
-  
-   // Show loading state (optional)
-   const submitButton = e.currentTarget.querySelector('button[type="submit"]') as HTMLButtonElement
-   const originalText = submitButton?.textContent
-   if (submitButton) submitButton.textContent = 'Sending...'
-  
-   try {
-    const response = await fetch('https://formspree.io/f/meoywgny', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: contactForm.name,
-        email: contactForm.email,
-        message: contactForm.message || 'No message provided',
-        _subject: `New Contact from ${contactForm.name}`, // Custom subject line
-      }),
-    })
-
-    if (response.ok) {
-      alert(`Thanks ${contactForm.name}! Our team will get in touch with you soon at ${contactForm.email}.`)
-      setContactForm({ name: '', email: '', message: '' })
-    } else {
-      alert('Oops! Something went wrong. Please try again or email us directly.')
-    }
-   } catch (error) {
-    console.error('Form submission error:', error)
-    alert('Oops! Something went wrong. Please try again or email us directly.')
-   } finally {
-    // Reset button text
-    if (submitButton && originalText) submitButton.textContent = originalText
-   }
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setFormStatus('sending')
+    try {
+      const res = await fetch('https://formspree.io/f/meoywgny', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: contactForm.name,
+          email: contactForm.email,
+          message: contactForm.message || 'No message provided',
+          _subject: `New Contact from ${contactForm.name}`,
+        }),
+      })
+      if (res.ok) { setFormStatus('sent'); setContactForm({ name: '', email: '', message: '' }) }
+      else setFormStatus('error')
+    } catch { setFormStatus('error') }
   }
 
   return (
-    <main className="min-h-screen relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black"></div>
-        <div className="absolute top-20 -left-20 w-96 h-96 bg-codeforge-green/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 -right-20 w-96 h-96 bg-codeforge-green/5 rounded-full blur-3xl animate-pulse delay-700"></div>
-      </div>
+    <main className="min-h-screen bg-[#060d1a] text-white overflow-x-hidden">
 
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-black/60 backdrop-blur-xl border-b border-codeforge-green/20 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      {/* ── Background: grid + radial glow ── */}
+      <div className="fixed inset-0 -z-10 grid-bg" />
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_80%_40%_at_50%_0%,rgba(56,189,248,0.07),transparent)]" />
+      <div className="fixed bottom-0 inset-x-0 h-[40vh] -z-10 bg-[radial-gradient(ellipse_60%_60%_at_50%_100%,rgba(59,130,246,0.05),transparent)]" />
+
+      {/* ── NAV ── */}
+      <nav className="fixed top-0 w-full z-50 glass-nav">
+        <div className="max-w-6xl mx-auto px-6 py-3.5 flex justify-between items-center">
+          {/* Logo + name */}
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <span className="text-3xl">🌲</span>
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-codeforge-green rounded-full animate-pulse"></div>
+            <div className="w-8 h-8 rounded-xl overflow-hidden ring-1 ring-white/10 flex-shrink-0">
+              <Image src="/logo.png" alt="Codeforge AI" width={32} height={32} className="w-full h-full object-cover" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-codeforge-green to-emerald-400 bg-clip-text text-transparent">CodeForge AI</span>
+            <span className="font-bold text-[15px] tracking-tight">
+              Codeforge <span className="text-cyan-400">AI</span>
+            </span>
           </div>
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-slate-300 hover:text-codeforge-green transition-all duration-300 hover:scale-105">Features</a>
-            <a href="#how-it-works" className="text-slate-300 hover:text-codeforge-green transition-all duration-300 hover:scale-105">How It Works</a>
-            <a href="#setup" className="text-slate-300 hover:text-codeforge-green transition-all duration-300 hover:scale-105">Get Started</a>
-            <a href="#faq" className="text-slate-300 hover:text-codeforge-green transition-all duration-300 hover:scale-105">FAQ</a>
-            <button onClick={() => handleDownload('Windows')} className="btn-primary text-sm py-2 px-6 shadow-lg shadow-codeforge-green/20">
+          <div className="hidden md:flex items-center gap-7 text-[13px] text-slate-400">
+            <a href="#features"    className="hover:text-cyan-400 transition-colors duration-200">Features</a>
+            <a href="#how-it-works" className="hover:text-cyan-400 transition-colors duration-200">How It Works</a>
+            <a href="#models"      className="hover:text-cyan-400 transition-colors duration-200">Models</a>
+            <a href="#faq"         className="hover:text-cyan-400 transition-colors duration-200">FAQ</a>
+            <button
+              onClick={handleDownload}
+              className="px-4 py-2 rounded-lg bg-blue-500/10 border border-blue-500/25 text-blue-400 hover:bg-blue-500/20 hover:border-blue-400/50 transition-all duration-200 font-medium"
+            >
               Download
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Conversational Hero Section */}
-      <section className="pt-32 pb-20 px-6 min-h-screen flex items-center justify-center">
-        <div className="max-w-5xl mx-auto w-full">
-          {/* Conversation Interface */}
-          <div className="mb-16 space-y-6">
-            {/* User Message 1 */}
-            {conversationStep >= 1 && (
-              <div className="flex justify-end animate-slide-in-right">
-                <div className="max-w-lg bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl rounded-tr-sm p-4 shadow-xl">
-                  <p className="text-slate-200 text-lg">Hey CodeForge, can you help me keeping my files secret?</p>
-                </div>
-              </div>
-            )}
+      {/* ── HERO ── */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20">
 
-            {/* AI Response 1 */}
-            {conversationStep >= 2 && (
-              <div className="flex justify-start animate-slide-in-left">
-                <div className="max-w-lg bg-gradient-to-br from-codeforge-green/20 to-emerald-900/20 border border-codeforge-green/40 rounded-2xl rounded-tl-sm p-4 shadow-xl shadow-codeforge-green/10">
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl mt-1">🌲</span>
-                    <div>
-                      <p className="text-codeforge-green font-semibold mb-1">CodeForge AI</p>
-                      <p className="text-slate-200 text-lg">Yes, I can help! I work 100% offline, so your code never leaves your machine. Complete privacy guaranteed.</p>
+        <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-blue-600/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-1/3 right-1/4 w-[350px] h-[350px] bg-cyan-500/5 rounded-full blur-[80px]  pointer-events-none" />
+
+        <div
+          className="text-center max-w-3xl mx-auto w-full"
+          style={{
+            opacity: heroReady ? 1 : 0,
+            transform: heroReady ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 0.9s ease, transform 0.9s ease',
+          }}
+        >
+          {/* Logo showcase in hero */}
+          <div className="flex justify-center mb-7">
+            <div className="relative">
+              <div className="absolute inset-0 bg-cyan-400/20 rounded-2xl blur-xl" />
+              <div className="relative w-16 h-16 rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-2xl shadow-cyan-500/20">
+                <Image src="/logo.png" alt="Codeforge AI" width={64} height={64} className="w-full h-full object-cover" />
+              </div>
+            </div>
+          </div>
+
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/5 text-cyan-400 text-xs font-medium mb-7 tracking-wide">
+            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
+            100% Offline &nbsp;·&nbsp; No Account &nbsp;·&nbsp; No Tracking
+          </div>
+
+          {/* Headline — professional size */}
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.05] mb-5">
+            <span className="hero-word block text-white"          style={{ animationDelay: '0.2s' }}>Your AI.</span>
+            <span className="hero-word block text-cyan-400"       style={{ animationDelay: '0.45s' }}>Your Machine.</span>
+            <span className="hero-word block text-slate-300"      style={{ animationDelay: '0.7s' }}>Your Rules.</span>
+          </h1>
+
+          {/* Rotating verb line */}
+          <div className="flex items-center justify-center gap-2 text-base md:text-lg text-slate-400 mb-4 h-7">
+            <span
+              className="text-white font-medium"
+              style={{
+                opacity: wordVisible ? 1 : 0,
+                transform: wordVisible ? 'translateY(0)' : 'translateY(-5px)',
+                transition: 'opacity 0.35s ease, transform 0.35s ease',
+                display: 'inline-block',
+                minWidth: '100px',
+                textAlign: 'right',
+              }}
+            >
+              {ROTATING_WORDS[wordIdx]}
+            </span>
+            <span>documents and data — completely offline.</span>
+          </div>
+
+          {/* Privacy whisper */}
+          <div className="h-6 flex items-center justify-center mb-9">
+            <p
+              className="text-slate-500 text-sm italic"
+              style={{
+                opacity: whisperVisible ? 1 : 0,
+                transform: whisperVisible ? 'translateY(0)' : 'translateY(5px)',
+                transition: 'opacity 0.5s ease, transform 0.5s ease',
+              }}
+            >
+              ✦&nbsp; {PRIVACY_WHISPERS[whisperIdx]}
+            </p>
+          </div>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+            <button
+              onClick={handleDownload}
+              className="glow-btn px-8 py-3.5 rounded-xl bg-blue-600 text-white font-semibold text-sm tracking-wide hover:bg-blue-500 transition-all duration-200 flex items-center gap-2.5"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
+              </svg>
+              Download for Windows
+            </button>
+            <button className="px-8 py-3.5 rounded-xl border border-white/8 text-slate-400 font-medium text-sm hover:border-white/15 hover:text-slate-300 transition-all duration-200 flex items-center gap-2">
+              <span>🍎</span> Mac — Coming Soon
+            </button>
+          </div>
+
+          <p className="mt-4 text-xs text-slate-600">Free forever · Windows 10/11 · No signup required</p>
+        </div>
+
+        {/* Scroll cue */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 text-slate-600 text-[10px] animate-bounce-slow">
+          <span className="tracking-[0.15em] uppercase">scroll</span>
+          <div className="w-px h-7 bg-gradient-to-b from-slate-600 to-transparent" />
+        </div>
+      </section>
+
+      {/* ── PRIVACY STATEMENT ── */}
+      <section className="py-28 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,rgba(56,189,248,0.04),transparent)] pointer-events-none" />
+        <div className="max-w-5xl mx-auto relative z-10">
+          <Reveal className="text-center mb-16">
+            <p className="text-[11px] font-bold text-cyan-400 tracking-[0.2em] uppercase mb-5">Privacy First</p>
+            <h2 className="text-3xl md:text-5xl font-black leading-tight">
+              <span className="text-slate-500">What happens on your machine</span>
+              <br />
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">stays on your machine.</span>
+            </h2>
+          </Reveal>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            {[
+              { icon: '🗂️', title: 'Your Documents', desc: 'PDFs, Word docs, Excel files — processed entirely on-device. Never uploaded anywhere.' },
+              { icon: '🤖', title: 'Your AI Models', desc: 'Downloaded once. Run offline forever. No API keys. No subscriptions.' },
+              { icon: '💬', title: 'Your Conversations', desc: 'Lives only in memory on your machine. No server, no log, no history cloud.' },
+            ].map((item, i) => (
+              <Reveal key={i} delay={i * 100}>
+                <div className="glass-card p-7 text-center group h-full">
+                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
+                  <div className="w-8 h-px bg-cyan-500/40 mx-auto mb-4" />
+                  <h3 className="font-bold text-white mb-2">{item.title}</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FEATURES ── */}
+      <section id="features" className="py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <Reveal className="text-center mb-12">
+            <p className="text-[11px] font-bold text-cyan-400 tracking-[0.2em] uppercase mb-4">Features</p>
+            <h2 className="text-3xl md:text-4xl font-black mb-3">
+              Built for <span className="text-cyan-400">real work</span>
+            </h2>
+            <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed">
+              Not a demo. A serious offline AI tool for researchers, analysts, and developers.
+            </p>
+          </Reveal>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {[
+              { icon: '🔒', title: 'Fully Offline',          desc: 'AI models run on your CPU. Zero internet needed after initial setup. Firewall-safe.' },
+              { icon: '📄', title: 'Document Intelligence', desc: 'Upload PDFs, Word docs, Excel files. Ask anything. Get cited answers from your own data.' },
+              { icon: '📊', title: 'Analytics Engine',       desc: 'Auto-calculates financial & pharma formulas — gross margin, ROE, assay potency — from your spreadsheets.' },
+              { icon: '🔌', title: 'VS Code Hub',            desc: 'Connect VS Code or Cursor. AI sees your code locally. Explain, refactor, fix — right-click.' },
+              { icon: '🤖', title: '4 Free AI Models',       desc: 'Qwen 0.5B to Phi-3.5 Mini. No HuggingFace account, no token, no subscription.' },
+              { icon: '🌐', title: 'Multi-language',         desc: 'Ask in English, Hindi, French or Spanish. Codeforge responds in your language automatically.' },
+            ].map((f, i) => (
+              <Reveal key={i} delay={i * 55}>
+                <div className="glass-card p-5 group hover:border-blue-500/30 h-full">
+                  <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">{f.icon}</div>
+                  <h3 className="font-semibold text-white mb-1.5 text-sm group-hover:text-cyan-400 transition-colors duration-200">{f.title}</h3>
+                  <p className="text-slate-400 text-xs leading-relaxed">{f.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <section id="how-it-works" className="py-24 px-6 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050b17]/60 to-transparent pointer-events-none" />
+        <div className="max-w-5xl mx-auto relative z-10">
+          <Reveal className="text-center mb-12">
+            <p className="text-[11px] font-bold text-cyan-400 tracking-[0.2em] uppercase mb-4">How It Works</p>
+            <h2 className="text-3xl md:text-4xl font-black">Up and running <span className="text-cyan-400">in minutes</span></h2>
+          </Reveal>
+
+          <div className="grid md:grid-cols-3 gap-5">
+            {[
+              { n: '01', title: 'Download & Install', desc: 'One-click installer for Windows. No signup, no account, no internet required after install.', icon: '📦' },
+              { n: '02', title: 'Pick an AI Model',   desc: 'Choose from 4 free models. All download directly with no HuggingFace account needed.', icon: '🤖' },
+              { n: '03', title: 'Ask Anything',       desc: 'Chat with your documents, analyze Excel data, or connect VS Code for code assistance.', icon: '🚀' },
+            ].map((s, i) => (
+              <Reveal key={i} delay={i * 120}>
+                <div className="glass-card p-7 group hover:border-blue-500/20 transition-all duration-300 h-full">
+                  <div className="text-4xl font-black text-blue-500/15 group-hover:text-blue-500/25 transition-colors duration-300 mb-3 font-mono">{s.n}</div>
+                  <div className="text-3xl mb-3">{s.icon}</div>
+                  <h3 className="font-semibold text-white mb-2 text-sm group-hover:text-cyan-400 transition-colors duration-200">{s.title}</h3>
+                  <p className="text-slate-400 text-xs leading-relaxed">{s.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── MODELS ── */}
+      <section id="models" className="py-24 px-6">
+        <div className="max-w-4xl mx-auto">
+          <Reveal className="text-center mb-12">
+            <p className="text-[11px] font-bold text-cyan-400 tracking-[0.2em] uppercase mb-4">AI Models</p>
+            <h2 className="text-3xl md:text-4xl font-black mb-3">
+              Four models. <span className="text-cyan-400">Zero tokens.</span>
+            </h2>
+            <p className="text-slate-400 text-sm max-w-md mx-auto">
+              All models download directly — no HuggingFace account or API key required.
+            </p>
+          </Reveal>
+
+          <div className="grid md:grid-cols-2 gap-3.5">
+            {[
+              { name: 'Qwen2.5 0.5B', org: 'Alibaba',   orgColor: 'text-cyan-400',  size: '397 MB', speed: 'Very Fast', quality: 'Good',      rec: true,  desc: 'Best starting point. Fastest on any hardware. Recommended for most users.' },
+              { name: 'Qwen2.5 1.5B', org: 'Alibaba',   orgColor: 'text-cyan-400',  size: '986 MB', speed: 'Fast',      quality: 'Very Good',  rec: false, desc: 'Better reasoning with minimal speed trade-off. Great for most tasks.' },
+              { name: 'Phi-3.5 Mini', org: 'Microsoft', orgColor: 'text-blue-400',  size: '2.4 GB', speed: 'Moderate',  quality: 'Excellent',  rec: false, desc: 'Best reasoning quality. Ideal for complex documents and deep research.' },
+              { name: 'Gemma 2 2B',   org: 'Google',    orgColor: 'text-green-400', size: '1.7 GB', speed: 'Fast',      quality: 'Good',       rec: false, desc: 'Efficient and accurate. Excellent for document Q&A and summarization.' },
+            ].map((m, i) => (
+              <Reveal key={i} delay={i * 70}>
+                <div className={`glass-card p-5 flex items-start gap-4 group hover:border-blue-500/25 transition-all duration-300 h-full ${m.rec ? 'border-cyan-500/25' : ''}`}>
+                  <div className={`w-9 h-9 rounded-lg bg-white/4 border border-white/8 flex items-center justify-center font-bold text-xs flex-shrink-0 ${m.orgColor}`}>
+                    {m.org[0]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <span className="font-semibold text-white text-sm">{m.name}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded border ${m.orgColor} border-current bg-current/10`}>{m.org}</span>
+                      {m.rec && <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Recommended</span>}
+                    </div>
+                    <p className="text-slate-400 text-xs leading-relaxed mb-2.5">{m.desc}</p>
+                    <div className="flex gap-4 text-[11px] text-slate-500">
+                      <span>📦 {m.size}</span>
+                      <span>⚡ {m.speed}</span>
+                      <span>✨ {m.quality}</span>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-
-            {/* User Message 2 */}
-            {conversationStep >= 3 && (
-              <div className="flex justify-end animate-slide-in-right">
-                <div className="max-w-lg bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl rounded-tr-sm p-4 shadow-xl">
-                  <p className="text-slate-200 text-lg">That's amazing! How fast can you generate code?</p>
-                </div>
-              </div>
-            )}
-
-            {/* AI Response 2 */}
-            {conversationStep >= 3 && (
-              <div className="flex justify-start animate-slide-in-left delay-500">
-                <div className="max-w-lg bg-gradient-to-br from-codeforge-green/20 to-emerald-900/20 border border-codeforge-green/40 rounded-2xl rounded-tl-sm p-4 shadow-xl shadow-codeforge-green/10">
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl mt-1">🌲</span>
-                    <div>
-                      <p className="text-codeforge-green font-semibold mb-1">CodeForge AI</p>
-                      <p className="text-slate-200 text-lg">In firewall-safe mode, 1-2 minutes per generation. With cloud mode, just 2-3 seconds!</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+              </Reveal>
+            ))}
           </div>
+        </div>
+      </section>
 
-          {/* Main Hero Content */}
-          {showHero && (
-            <div className="text-center space-y-8 animate-fade-in-up">
-              <div className="inline-block">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-codeforge-green/20 blur-3xl rounded-full"></div>
-                  <span className="text-9xl animate-float relative z-10 inline-block">🌲</span>
-                </div>
-              </div>
-
-              <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-                Your <span className="bg-gradient-to-r from-codeforge-green via-emerald-400 to-codeforge-green bg-clip-text text-transparent animate-gradient">Private</span> AI
-                <br />
-                Code Assistant
-              </h1>
-
-              <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Code faster with AI. <span className="text-codeforge-green font-bold">100% private</span>.
-                <br />
-                Generate code, write SQL, and get instant AI help.
+      {/* ── VS CODE HUB ── */}
+      <section className="py-24 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,rgba(59,130,246,0.04),transparent)] pointer-events-none" />
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <Reveal>
+              <p className="text-[11px] font-bold text-cyan-400 tracking-[0.2em] uppercase mb-5">VS Code Extension</p>
+              <h2 className="text-3xl md:text-4xl font-black mb-5 leading-tight">
+                AI inside your editor.<br />
+                <span className="text-blue-400">Not in the cloud.</span>
+              </h2>
+              <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                Install the Codeforge AI extension in VS Code, Cursor or Windsurf. Your code context goes to <span className="text-white font-medium">your local machine only</span> — never to any server.
               </p>
+              <ul className="space-y-2.5">
+                {[
+                  'Works in VS Code, Cursor & Windsurf',
+                  'Explain, refactor, fix & comment — right-click',
+                  'Apply AI suggestions directly to your editor',
+                  'Zero telemetry · Completely local',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-sm text-slate-300">
+                    <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <button onClick={() => handleDownload('Windows')} className="group relative btn-primary flex items-center justify-center gap-3 text-lg py-4 px-10 overflow-hidden">
-                  <span className="absolute inset-0 bg-gradient-to-r from-codeforge-green to-emerald-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
-                  <span className="relative z-10">📦</span>
-                  <span className="relative z-10">Download for Windows</span>
-                </button>
-                <button onClick={() => handleDownload('Mac')} className="btn-secondary flex items-center justify-center gap-3 text-lg py-4 px-10 hover:border-codeforge-green/50">
-                  <span>🍎</span>
-                  Download for Mac
-                </button>
-              </div>
-
-              <div className="space-y-2 pt-4">
-                <p className="text-sm text-slate-400">
-                  Windows 10/11 • Mac • Linux
-                </p>
-                <p className="text-xs text-slate-500">
-                  No credit card • No email • No account required
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Why CodeForge Section */}
-      <section className="py-20 px-6 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-slate-950 to-black"></div>
-        <div className="max-w-7xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Why <span className="text-codeforge-green">CodeForge AI</span>?
-          </h2>
-          <p className="text-xl text-slate-300 mb-12 max-w-3xl mx-auto">
-            Powerful AI coding assistance with privacy and performance.
-          </p>
-
-          <div className="grid md:grid-cols-4 gap-6">
-            {[
-              { icon: '🔒', title: '100% Private', desc: 'Your code never leaves your machine' },
-              { icon: '💰', title: 'Own your software', desc: 'Download once, use unlimited' },
-              { icon: '⚡', title: 'Fast Generation', desc: 'Generate code in seconds' },
-              { icon: '🌍', title: 'Firewall-safe', desc: 'Firewall-safe operation' },
-            ].map((item, i) => (
-              <div key={i} className="group feature-card text-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-codeforge-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="relative z-10">
-                  <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
-                  <h3 className="text-xl font-semibold mb-2 text-codeforge-green">{item.title}</h3>
-                  <p className="text-slate-400 text-sm">{item.desc}</p>
+            <Reveal delay={200}>
+              <div className="glass-card p-0 overflow-hidden border-blue-500/15">
+                <div className="bg-[#070e1b] px-4 py-3 border-b border-white/5 flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/50" />
+                  </div>
+                  <span className="text-[11px] text-slate-500 ml-2 font-mono">Codeforge AI Hub — extension.ts</span>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-20 px-6 relative">
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-block mb-4">
-              <span className="text-sm font-bold text-codeforge-green bg-codeforge-green/10 px-4 py-2 rounded-full border border-codeforge-green/30">FEATURES</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Powerful <span className="text-codeforge-green">Features</span>
-            </h2>
-            <p className="text-xl text-slate-300">
-              Everything you need to code faster and smarter
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: '🔒',
-                title: 'Firewall-safe',
-                desc: '100% private, unlimited.1-2 minutes per generation.',
-              },
-              {
-                icon: '⚡',
-                title: 'Cloud Mode',
-                desc: 'Bring your own Claude API key for 2-3 second generation. You pay Anthropic directly.',
-              },
-              {
-                icon: '💻',
-                title: 'Code Generation',
-                desc: 'Generate complete functions, APIs, components instantly. Supports all major languages.',
-              },
-              {
-                icon: '🗄️',
-                title: 'SQL Query Assistant',
-                desc: 'Write complex SQL queries with natural language. Supports joins, aggregations, and more.',
-              },
-              {
-                icon: '💬',
-                title: 'AI Chat Assistant',
-                desc: 'Ask questions about your code. Get explanations, find bugs, optimize performance.',
-              },
-              {
-                icon: '📁',
-                title: 'Multi-Workspace',
-                desc: 'Work on multiple projects simultaneously. Switch between folders instantly.',
-              },
-              {
-                icon: '🎨',
-                title: 'Syntax Highlighting',
-                desc: 'Monaco editor with support for JavaScript, Python, Rust, SQL, and 10+ languages.',
-              },
-              {
-                icon: '⌨️',
-                title: 'Keyboard Shortcuts',
-                desc: 'Save time with Ctrl+S to save, Ctrl+N for new file, Ctrl+Enter to generate.',
-              },
-              {
-                icon: '💾',
-                title: 'Auto-Save Workspace',
-                desc: 'Your workspace persists across sessions.',
-              },
-            ].map((feature, i) => (
-              <div key={i} className="group feature-card">
-                <div className="flex items-start gap-4">
-                  <div className="text-4xl transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">{feature.icon}</div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold mb-2 text-white group-hover:text-codeforge-green transition-colors">{feature.title}</h3>
-                    <p className="text-slate-400 text-sm leading-relaxed">{feature.desc}</p>
+                <div className="p-5 font-mono text-[12px] leading-6 bg-[#050c18]">
+                  <div>
+                    <span className="text-purple-400">const</span>
+                    <span className="text-slate-300"> socket </span>
+                    <span className="text-slate-500">= </span>
+                    <span className="text-yellow-300">new </span>
+                    <span className="text-cyan-400">WebSocket</span>
+                    <span className="text-slate-300">(</span>
+                    <span className="text-orange-300">&quot;ws://127.0.0.1:7471&quot;</span>
+                    <span className="text-slate-300">);</span>
+                  </div>
+                  <div className="text-slate-600 text-[11px] mt-1 mb-3">{'// ↑ connects to YOUR machine only'}</div>
+                  <div>
+                    <span className="text-purple-400">socket</span>
+                    <span className="text-slate-300">.on(</span>
+                    <span className="text-orange-300">&quot;message&quot;</span>
+                    <span className="text-slate-300">, (msg) =&gt; {'{'}</span>
+                  </div>
+                  <div className="ml-4">
+                    <span className="text-purple-400">if </span>
+                    <span className="text-slate-300">(msg.type === </span>
+                    <span className="text-orange-300">&quot;apply&quot;</span>
+                    <span className="text-slate-300">)</span>
+                  </div>
+                  <div className="ml-8">
+                    <span className="text-blue-300">editor</span>
+                    <span className="text-slate-300">.</span>
+                    <span className="text-cyan-400">edit</span>
+                    <span className="text-slate-300">(eb =&gt;</span>
+                  </div>
+                  <div className="ml-12">
+                    <span className="text-blue-300">eb</span>
+                    <span className="text-slate-300">.</span>
+                    <span className="text-cyan-400">replace</span>
+                    <span className="text-slate-300">(selection, msg.code))</span>
+                  </div>
+                  <div className="text-slate-300">{'}'+')'}</div>
+                  <div className="mt-4 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                    <span className="text-cyan-400 text-[11px]">Connected — ws://127.0.0.1:7471</span>
                   </div>
                 </div>
               </div>
-            ))}
+            </Reveal>
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="py-20 px-6 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-slate-950 to-black"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-block mb-4">
-              <span className="text-sm font-bold text-codeforge-green bg-codeforge-green/10 px-4 py-2 rounded-full border border-codeforge-green/30">HOW IT WORKS</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              How It <span className="text-codeforge-green">Works</span>
+      {/* ── CONTACT ── */}
+      <section id="setup" className="py-24 px-6">
+        <div className="max-w-md mx-auto">
+          <Reveal className="text-center mb-8">
+            <p className="text-[11px] font-bold text-cyan-400 tracking-[0.2em] uppercase mb-4">Get Started</p>
+            <h2 className="text-3xl md:text-4xl font-black mb-2">
+              Need help? <span className="text-cyan-400">Let&apos;s talk.</span>
             </h2>
-            <p className="text-xl text-slate-300">
-              Start coding with AI in 3 simple steps
-            </p>
-          </div>
+            <p className="text-slate-400 text-sm">We typically respond within 24 hours.</p>
+          </Reveal>
 
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connection Lines */}
-            <div className="hidden md:block absolute top-12 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-codeforge-green via-emerald-400 to-codeforge-green"></div>
-
-            {[
-              {
-                step: '1',
-                title: 'Download & Install',
-                desc: 'One-click installer for Windows or Mac. No signup required.',
-                icon: '📦'
-              },
-              {
-                step: '2',
-                title: 'Choose Your Mode',
-                desc: 'Firewall-safe mode (private) or Cloud mode (fast). Your choice.',
-                icon: '⚙️'
-              },
-              {
-                step: '3',
-                title: 'Start Coding',
-                desc: 'Generate code, write SQL queries, and get AI help instantly.',
-                icon: '🚀'
-              },
-            ].map((item, i) => (
-              <div key={i} className="text-center group">
-                <div className="relative inline-block mb-6">
-                  <div className="absolute inset-0 bg-codeforge-green/20 rounded-full blur-xl group-hover:bg-codeforge-green/40 transition-all duration-500"></div>
-                  <div className="relative w-20 h-20 bg-gradient-to-br from-codeforge-green to-emerald-600 rounded-full flex items-center justify-center text-3xl font-bold shadow-xl shadow-codeforge-green/50 group-hover:scale-110 transition-transform duration-300">
-                    {item.step}
-                  </div>
+          <Reveal delay={100}>
+            <div className="glass-card p-6">
+              {formStatus === 'sent' ? (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-3">✅</div>
+                  <h3 className="text-lg font-bold text-white mb-1">Message sent!</h3>
+                  <p className="text-slate-400 text-sm">We&apos;ll be in touch soon.</p>
+                  <button onClick={() => setFormStatus('idle')} className="mt-5 text-xs text-cyan-400 hover:underline">Send another</button>
                 </div>
-                <div className="text-5xl mb-6 transform group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
-                <h3 className="text-2xl font-bold mb-3 group-hover:text-codeforge-green transition-colors">{item.title}</h3>
-                <p className="text-slate-400 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
+              ) : (
+                <form onSubmit={handleContactSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-1.5">Name</label>
+                    <input
+                      type="text" required value={contactForm.name}
+                      onChange={e => setContactForm({ ...contactForm, name: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-white/4 border border-white/8 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-blue-500/40 transition-colors text-sm"
+                      placeholder="Your name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-1.5">Email</label>
+                    <input
+                      type="email" required value={contactForm.email}
+                      onChange={e => setContactForm({ ...contactForm, email: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-white/4 border border-white/8 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-blue-500/40 transition-colors text-sm"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-1.5">
+                      Message <span className="text-slate-600 font-normal normal-case">(optional)</span>
+                    </label>
+                    <textarea
+                      rows={4} value={contactForm.message}
+                      onChange={e => setContactForm({ ...contactForm, message: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-white/4 border border-white/8 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-blue-500/40 transition-colors resize-none text-sm"
+                      placeholder="How can we help?"
+                    />
+                  </div>
+                  {formStatus === 'error' && <p className="text-red-400 text-xs">Something went wrong. Please try again.</p>}
+                  <button
+                    type="submit" disabled={formStatus === 'sending'}
+                    className="w-full py-2.5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-colors disabled:opacity-50 text-sm"
+                  >
+                    {formStatus === 'sending' ? 'Sending…' : 'Send Message'}
+                  </button>
+                </form>
+              )}
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* Get Started - Contact Form */}
-      <section id="setup" className="py-20 px-6 relative">
-        <div className="max-w-4xl mx-auto relative z-10">
-          <div className="text-center mb-12">
-            <div className="inline-block mb-4">
-              <span className="text-sm font-bold text-codeforge-green bg-codeforge-green/10 px-4 py-2 rounded-full border border-codeforge-green/30">GET STARTED</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Get Started with <span className="text-codeforge-green">CodeForge AI</span>
-            </h2>
-            <p className="text-xl text-slate-300">
-              Need help getting set up? Contact us and our team will get in touch with you
-            </p>
-          </div>
-
-          <div className="feature-card max-w-2xl mx-auto relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-codeforge-green via-emerald-400 to-codeforge-green"></div>
-            <form onSubmit={handleContactSubmit} className="space-y-6 p-2">
-              <div>
-                <label htmlFor="name" className="block text-sm font-bold mb-2 text-codeforge-green">
-                  Your Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  required
-                  value={contactForm.name}
-                  onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
-                  className="w-full px-4 py-3 bg-black/50 border-2 border-slate-800 rounded-xl focus:outline-none focus:border-codeforge-green transition-all duration-300 text-white placeholder-slate-500"
-                  placeholder="John Doe"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-bold mb-2 text-codeforge-green">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  required
-                  value={contactForm.email}
-                  onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
-                  className="w-full px-4 py-3 bg-black/50 border-2 border-slate-800 rounded-xl focus:outline-none focus:border-codeforge-green transition-all duration-300 text-white placeholder-slate-500"
-                  placeholder="john@example.com"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="message" className="block text-sm font-bold mb-2 text-codeforge-green">
-                  Message (Optional)
-                </label>
-                <textarea
-                  id="message"
-                  rows={4}
-                  value={contactForm.message}
-                  onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
-                  className="w-full px-4 py-3 bg-black/50 border-2 border-slate-800 rounded-xl focus:outline-none focus:border-codeforge-green transition-all duration-300 resize-none text-white placeholder-slate-500"
-                  placeholder="Tell us how we can help you..."
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full btn-primary py-4 text-lg font-bold shadow-xl shadow-codeforge-green/30 hover:shadow-codeforge-green/50"
-              >
-                Contact Us
-              </button>
-
-              <p className="text-center text-sm text-slate-400">
-                Our team typically responds within 24 hours
-              </p>
-            </form>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="py-20 px-6 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-slate-950 to-black"></div>
-        <div className="max-w-4xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-block mb-4">
-              <span className="text-sm font-bold text-codeforge-green bg-codeforge-green/10 px-4 py-2 rounded-full border border-codeforge-green/30">FAQ</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Frequently Asked <span className="text-codeforge-green">Questions</span>
-            </h2>
-          </div>
-
-          <div className="space-y-6">
+      {/* ── FAQ ── */}
+      <section id="faq" className="py-24 px-6 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050b17]/50 to-transparent pointer-events-none" />
+        <div className="max-w-2xl mx-auto relative z-10">
+          <Reveal className="text-center mb-12">
+            <p className="text-[11px] font-bold text-cyan-400 tracking-[0.2em] uppercase mb-4">FAQ</p>
+            <h2 className="text-3xl md:text-4xl font-black">Common <span className="text-cyan-400">questions</span></h2>
+          </Reveal>
+          <div className="space-y-2.5">
             {[
-              {
-                q: 'Is my code private and secure?',
-                a: 'Absolutely! When using Firewall-safe mode, your code never leaves your computer. Everything runs locally on your machine. Even in cloud mode, only your prompts are sent to Claude API - your full codebase stays private on your computer.'
-              },
-              {
-                q: 'Do I need to create an account?',
-                a: 'No! Just download, install, and start using. No email, no signup, no account required. We don\'t track you or collect your data.'
-              },
-              {
-                q: 'What programming languages are supported?',
-                a: 'CodeForge AI supports all major programming languages including JavaScript, TypeScript, Python, Rust, Java, C++, Go, SQL, HTML, CSS, and more. The AI can generate code in any language you request.'
-              },
-              {
-                q: 'How is this different from GitHub Copilot?',
-                a: 'Unlike Copilot, CodeForge AI works 100% Firewall-safe, and gives you full control over your privacy. You can use it without sharing your code with any cloud service.'
-              },
-              {
-                q: 'Can I use this commercially?',
-                a: 'Yes! CodeForge AI can be used for both personal and commercial projects. The code you generate belongs to you. Use it however you want.'
-              },
+              { q: 'Is my data really private?',                        a: 'Yes. All AI processing happens on your machine. No data is ever sent to a server. Your documents, chats, and questions stay exclusively on your computer — even when you\'re online.' },
+              { q: 'Do I need a HuggingFace account or token?',         a: 'No. All four models download directly without any account, token, or sign-up. Just click download inside the app.' },
+              { q: 'What can I use Codeforge AI for?',                  a: 'Research Q&A from your own documents, Excel data extraction and formula calculations (financial & pharma), AI chat, and code assistance via the VS Code/Cursor extension.' },
+              { q: 'What are the system requirements?',                  a: 'Windows 10 or 11 (64-bit). Minimum 4 GB RAM for small models, 8 GB recommended for Phi-3.5. No GPU required — everything runs on CPU.' },
+              { q: 'How is this different from ChatGPT or Copilot?',    a: 'ChatGPT and Copilot send your data to remote servers. Codeforge AI runs entirely on your device — your questions, documents and responses never leave your machine. Zero external calls after setup.' },
+              { q: 'Is it really free?',                                 a: 'Yes — completely free, forever. No subscription, no trial, no credit card. Download, install, run.' },
             ].map((faq, i) => (
-              <div key={i} className="group feature-card relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-codeforge-green transform scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-top"></div>
-                <div className="pl-4">
-                  <h3 className="text-xl font-bold mb-3 text-codeforge-green flex items-start gap-2">
-                    <span className="text-codeforge-green/50 text-2xl">Q:</span>
-                    {faq.q}
-                  </h3>
-                  <p className="text-slate-300 leading-relaxed pl-8">
-                    {faq.a}
-                  </p>
-                </div>
-              </div>
+              <Reveal key={i} delay={i * 40}>
+                <FAQItem q={faq.q} a={faq.a} />
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20 px-6 relative">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-codeforge-green/5 to-black"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-codeforge-green/10 via-transparent to-transparent"></div>
-        </div>
-
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="mb-8">
-            <span className="text-6xl inline-block animate-float">🌲</span>
+      {/* ── FINAL CTA ── */}
+      <section className="py-32 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgba(59,130,246,0.07),transparent)] pointer-events-none" />
+        <Reveal className="max-w-2xl mx-auto text-center relative z-10">
+          <div className="flex justify-center mb-8">
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-500/20 rounded-2xl blur-2xl" />
+              <div className="relative w-14 h-14 rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-2xl shadow-blue-500/20">
+                <Image src="/logo.png" alt="Codeforge AI" width={56} height={56} className="w-full h-full object-cover" />
+              </div>
+            </div>
           </div>
-
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Ready to Code <span className="text-codeforge-green">Faster</span>?
+          <h2 className="text-4xl md:text-5xl font-black mb-4 leading-tight tracking-tight">
+            Research smarter.<br />
+            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Stay private.</span>
           </h2>
-          <p className="text-xl md:text-2xl text-slate-300 mb-12">
-            Join developers coding smarter with AI
+          <p className="text-slate-400 mb-8 text-sm max-w-sm mx-auto">
+            Free forever. No account. No cloud. Just you and your AI.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <button onClick={() => handleDownload('Windows')} className="group relative btn-primary flex items-center justify-center gap-3 text-lg py-5 px-12 overflow-hidden shadow-2xl shadow-codeforge-green/40">
-              <span className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-codeforge-green transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
-              <span className="relative z-10 text-2xl">📦</span>
-              <span className="relative z-10 font-bold">Download for Windows</span>
-            </button>
-            <button onClick={() => handleDownload('Mac')} className="btn-secondary flex items-center justify-center gap-3 text-lg py-5 px-12 hover:border-codeforge-green/50 shadow-xl">
-              <span className="text-2xl">🍎</span>
-              <span className="font-bold">Download for Mac</span>
-            </button>
-          </div>
-
-          <p className="text-sm text-slate-400 mb-2">
-            Windows 10/11 • Mac • Linux
-          </p>
-          <p className="text-xs text-slate-500">
-            No signup • No email • No account
-          </p>
-        </div>
+          <button
+            onClick={handleDownload}
+            className="glow-btn px-10 py-4 rounded-xl bg-blue-600 text-white font-bold text-base hover:bg-blue-500 transition-all duration-200 inline-flex items-center gap-2.5"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
+            </svg>
+            Download Codeforge AI — Free
+          </button>
+          <p className="mt-4 text-xs text-slate-600">Windows 10/11 · 64-bit · ~400 MB to 2.4 GB depending on model</p>
+        </Reveal>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 px-6 border-t border-codeforge-green/20 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-black to-slate-950"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+      {/* ── FOOTER ── */}
+      <footer className="py-12 px-6 border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-8 mb-10">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">🌲</span>
-                <span className="font-bold text-lg bg-gradient-to-r from-codeforge-green to-emerald-400 bg-clip-text text-transparent">CodeForge AI</span>
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className="w-7 h-7 rounded-lg overflow-hidden ring-1 ring-white/10">
+                  <Image src="/logo.png" alt="Codeforge AI" width={28} height={28} className="w-full h-full object-cover" />
+                </div>
+                <span className="font-bold text-sm">Codeforge <span className="text-cyan-400">AI</span></span>
               </div>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Your Private AI code assistant. Code faster, privately.
-              </p>
+              <p className="text-slate-500 text-xs leading-relaxed">Your private, offline AI research assistant. Runs on your machine. Always.</p>
             </div>
-
             <div>
-              <h4 className="font-bold mb-4 text-codeforge-green">Product</h4>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li><a href="#features" className="hover:text-codeforge-green transition-colors hover:translate-x-1 inline-block">Features</a></li>
-                <li><a href="#setup" className="hover:text-codeforge-green transition-colors hover:translate-x-1 inline-block">Get Started</a></li>
-                <li><a href="#" className="hover:text-codeforge-green transition-colors hover:translate-x-1 inline-block">Download</a></li>
-                <li><a href="#" className="hover:text-codeforge-green transition-colors hover:translate-x-1 inline-block">Documentation</a></li>
+              <h4 className="text-[10px] font-bold text-white uppercase tracking-wider mb-4">Product</h4>
+              <ul className="space-y-2 text-xs text-slate-500">
+                <li><a href="#features"    className="hover:text-cyan-400 transition-colors">Features</a></li>
+                <li><a href="#models"      className="hover:text-cyan-400 transition-colors">Models</a></li>
+                <li><a href="#how-it-works" className="hover:text-cyan-400 transition-colors">How It Works</a></li>
               </ul>
             </div>
-
             <div>
-              <h4 className="font-bold mb-4 text-codeforge-green">Support</h4>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li><a href="#faq" className="hover:text-codeforge-green transition-colors hover:translate-x-1 inline-block">FAQ</a></li>
-                <li><a href="https://github.com/Edu124/Codeforge-ai/releases/download/v1.0.0/CodeForge.AI_1.1.0_x64_en-US.msi" target="_blank" className="hover:text-codeforge-green transition-colors hover:translate-x-1 inline-block">GitHub</a></li>
-                <li><a href="#setup" className="hover:text-codeforge-green transition-colors hover:translate-x-1 inline-block">Contact Us</a></li>
-                <li><a href="#" className="hover:text-codeforge-green transition-colors hover:translate-x-1 inline-block">Report Bug</a></li>
+              <h4 className="text-[10px] font-bold text-white uppercase tracking-wider mb-4">Support</h4>
+              <ul className="space-y-2 text-xs text-slate-500">
+                <li><a href="#faq"   className="hover:text-cyan-400 transition-colors">FAQ</a></li>
+                <li><a href="#setup" className="hover:text-cyan-400 transition-colors">Contact Us</a></li>
+                <li><a href="https://github.com/bhaveshshahani824-pixel/codeforge" target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors">GitHub</a></li>
               </ul>
             </div>
-
             <div>
-              <h4 className="font-bold mb-4 text-codeforge-green">Legal</h4>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li><a href="/privacy" className="hover:text-codeforge-green transition-colors hover:translate-x-1 inline-block">Privacy Policy</a></li>
-                <li><a href="/terms" className="hover:text-codeforge-green transition-colors hover:translate-x-1 inline-block">Terms of Service</a></li>
-                <li><a href="/license" className="hover:text-codeforge-green transition-colors hover:translate-x-1 inline-block">License</a></li>
+              <h4 className="text-[10px] font-bold text-white uppercase tracking-wider mb-4">Legal</h4>
+              <ul className="space-y-2 text-xs text-slate-500">
+                <li><a href="/privacy" className="hover:text-cyan-400 transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms"   className="hover:text-cyan-400 transition-colors">Terms of Service</a></li>
               </ul>
             </div>
           </div>
-
-          <div className="border-t border-codeforge-green/20 pt-8 text-center text-sm text-slate-400">
-            <p>© 2024 CodeForge AI. All rights reserved. Made with <span className="text-codeforge-green">💚</span> for developers.</p>
-            <p className="mt-2 text-xs text-slate-500">100% privacy-focused AI code assistant.</p>
+          <div className="border-t border-white/5 pt-7 flex flex-col md:flex-row justify-between items-center gap-3 text-[11px] text-slate-600">
+            <p>© 2025 Codeforge AI. All rights reserved.</p>
+            <p>Built for privacy · Runs offline · Free forever</p>
           </div>
         </div>
       </footer>
+
     </main>
   )
 }
