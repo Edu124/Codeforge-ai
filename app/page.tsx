@@ -95,7 +95,7 @@ export default function Home() {
   }, [])
 
   const handleDownload = () => {
-    window.location.href = 'https://github.com/Edu124/Codeforge-ai/releases/download/v0.2.0/Codeforge.AI_0.2.0_x64_en-US.msi'
+    window.location.href = 'https://github.com/Edu124/Codeforge-ai/releases/download/v0.3.1/Codeforge.AI_0.3.1_x64_en-US.msi'
   }
 
   const handleContactSubmit = async (e: React.FormEvent) => {
@@ -621,7 +621,7 @@ export default function Home() {
               <ul className="space-y-2 text-xs text-slate-500">
                 <li><a href="#faq"   className="hover:text-cyan-400 transition-colors">FAQ</a></li>
                 <li><a href="#setup" className="hover:text-cyan-400 transition-colors">Contact Us</a></li>
-                <li><a href="https://github.com/Edu124/Codeforge-ai/releases/download/v0.2.0/Codeforge.AI_0.2.0_x64_en-US.msi" target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors">GitHub</a></li>
+                <li><a href="https://github.com/Edu124/Codeforge-ai/releases/download/v0.3.1/Codeforge.AI_0.3.1_x64_en-US.msi" target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors">GitHub</a></li>
               </ul>
             </div>
             <div>
