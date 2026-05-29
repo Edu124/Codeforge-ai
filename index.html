@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeForge AI — Your Offline + Online AI Coding Assistant</title>
+  <meta name="description" content="CodeForge is an AI coding assistant that works fully offline or connects to powerful cloud models. Built for developers who want privacy, speed, and control." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/style.css" />
+</head>
+<body>
+
+  <!-- ── Navbar ── -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="logo-icon">⚡</div>
+        <span class="logo-text">CodeForge <span class="logo-ai">AI</span></span>
+      </div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <a href="#download" class="nav-cta">Download Free</a>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-badge">🚀 Now with online AI models — no GPU needed</div>
+    <h1 class="hero-title">
+      The AI Coding Assistant<br />
+      <span class="gradient-text">That Runs On Your Machine</span>
+    </h1>
+    <p class="hero-sub">
+      CodeForge runs 100% offline by default — no internet, no data leaks, no subscriptions required.
+      Upgrade to unlock powerful cloud models when you need them.
+    </p>
+    <div class="hero-actions">
+      <a href="#download" class="btn-primary">
+        ⬇ Download for Windows — Free
+      </a>
+      <a href="#pricing" class="btn-secondary">See Plans →</a>
+    </div>
+    <div class="hero-note">No account needed to start · Works on any Windows PC · 100% private</div>
+
+    <!-- Code preview -->
+    <div class="code-preview">
+      <div class="code-preview-header">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+        <span class="code-preview-title">CodeForge — chat.py</span>
+      </div>
+      <div class="code-body">
+        <div class="code-line"><span class="code-comment"># User asked: "Create a Razorpay payment order in Django"</span></div>
+        <div class="code-line">&nbsp;</div>
+        <div class="code-line"><span class="code-keyword">import</span> <span class="code-var">razorpay</span></div>
+        <div class="code-line"><span class="code-keyword">from</span> <span class="code-var">django.conf</span> <span class="code-keyword">import</span> <span class="code-var">settings</span></div>
+        <div class="code-line">&nbsp;</div>
+        <div class="code-line"><span class="code-keyword">def</span> <span class="code-fn">create_payment_order</span>(<span class="code-var">amount_inr</span>):</div>
+        <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-var">client</span> = <span class="code-var">razorpay</span>.<span class="code-fn">Client</span>(</div>
+        <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-var">auth</span>=(<span class="code-var">settings</span>.<span class="code-const">RAZORPAY_KEY_ID</span>,</div>
+        <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-var">settings</span>.<span class="code-const">RAZORPAY_SECRET</span>))</div>
+        <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">return</span> <span class="code-var">client</span>.<span class="code-var">order</span>.<span class="code-fn">create</span>({</div>
+        <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-str">"amount"</span>:   <span class="code-var">amount_inr</span> * <span class="code-num">100</span>,</div>
+        <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-str">"currency"</span>: <span class="code-str">"INR"</span>,</div>
+        <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;})</div>
+        <div class="code-cursor">█</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Features ── -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-label">WHY CODEFORGE</div>
+      <h2 class="section-title">Everything a developer needs</h2>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>100% Private</h3>
+          <p>Free plan runs entirely on your device. Your code never leaves your machine. No telemetry, no cloud, no compromise.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Works Offline</h3>
+          <p>Download once, use forever. No internet connection required. Works in planes, basements, and restricted networks.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <h3>Train Your Own Model</h3>
+          <p>Fine-tune a model on your own codebase. Load any GGUF model you've trained. Make CodeForge an expert in your stack.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">☁️</div>
+          <h3>Cloud When You Need It</h3>
+          <p>Upgrade to Pro/Max and get Llama 70B quality responses for complex tasks — same app, just smarter answers.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🇮🇳</div>
+          <h3>Built for Indian Devs</h3>
+          <p>Knows Django, Flutter, Supabase, Razorpay, WhatsApp API, and the Indian startup stack inside out.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔌</div>
+          <h3>Works with Any IDE</h3>
+          <p>VS Code extension, JetBrains plugin, or standalone app. Fits into your existing workflow seamlessly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── How It Works ── -->
+  <section class="section section-dark" id="how">
+    <div class="container">
+      <div class="section-label">HOW IT WORKS</div>
+      <h2 class="section-title">Simple to start, powerful to scale</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Download the app</h3>
+            <p>Free Windows installer. No account, no sign-up. Works immediately.</p>
+          </div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Pick a model</h3>
+            <p>Download a local model once, or load your own trained GGUF file.</p>
+          </div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Start coding faster</h3>
+            <p>Ask questions, generate code, debug errors — all from one place.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Pricing ── -->
+  <section class="section" id="pricing">
+    <div class="container">
+      <div class="section-label">PRICING</div>
+      <h2 class="section-title">Start free. Upgrade when you need more.</h2>
+      <p class="section-sub">All plans include the offline model. Paid plans add cloud-powered AI with no usage restrictions.</p>
+
+      <div class="pricing-grid">
+
+        <!-- Free -->
+        <div class="pricing-card">
+          <div class="plan-name">Free</div>
+          <div class="plan-price">$0<span class="plan-period">/month</span></div>
+          <div class="plan-desc">Perfect to get started</div>
+          <ul class="plan-features">
+            <li>✓ Local 1.5B AI model</li>
+            <li>✓ 100% offline</li>
+            <li>✓ Load your own GGUF model</li>
+            <li>✓ Code chat & generation</li>
+            <li>✓ Document Q&A</li>
+            <li>✗ Online AI models</li>
+            <li>✗ Cloud sync</li>
+          </ul>
+          <a href="#download" class="plan-btn plan-btn-outline">Download Free</a>
+        </div>
+
+        <!-- Pro -->
+        <div class="pricing-card pricing-card-popular">
+          <div class="popular-badge">Most Popular</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">$10<span class="plan-period">/month</span></div>
+          <div class="plan-desc">For serious developers</div>
+          <ul class="plan-features">
+            <li>✓ Everything in Free</li>
+            <li>✓ <strong>Deepseek R1 70B</strong> online</li>
+            <li>✓ Unlimited requests</li>
+            <li>✓ Faster responses</li>
+            <li>✓ Code review & refactor</li>
+            <li>✓ Priority support</li>
+            <li>✗ Dedicated instance</li>
+          </ul>
+          <a href="#download" class="plan-btn plan-btn-primary">Get Pro →</a>
+        </div>
+
+        <!-- Max -->
+        <div class="pricing-card">
+          <div class="plan-name">Max</div>
+          <div class="plan-price">$16<span class="plan-period">/month</span></div>
+          <div class="plan-desc">For power users & teams</div>
+          <ul class="plan-features">
+            <li>✓ Everything in Pro</li>
+            <li>✓ <strong>Llama 3.3 70B</strong> online</li>
+            <li>✓ Unlimited requests</li>
+            <li>✓ Large local model downloads</li>
+            <li>✓ Advanced code analysis</li>
+            <li>✓ Priority support</li>
+            <li>✗ Dedicated instance</li>
+          </ul>
+          <a href="#download" class="plan-btn plan-btn-outline">Get Max →</a>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="pricing-card">
+          <div class="plan-name">Enterprise</div>
+          <div class="plan-price">$49<span class="plan-period">/month</span></div>
+          <div class="plan-desc">For companies & agencies</div>
+          <ul class="plan-features">
+            <li>✓ Everything in Max</li>
+            <li>✓ Dedicated server instance</li>
+            <li>✓ Up to 10 team seats</li>
+            <li>✓ Custom model fine-tuning</li>
+            <li>✓ SLA & uptime guarantee</li>
+            <li>✓ Self-hosted option</li>
+            <li>✓ Onboarding call</li>
+          </ul>
+          <a href="mailto:hello@codeforge.ai" class="plan-btn plan-btn-outline">Contact Us →</a>
+        </div>
+
+      </div>
+
+      <div class="pricing-note">
+        💳 Pay with UPI, debit/credit card (India) or international cards · Cancel anytime · No hidden fees
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ── -->
+  <section class="section section-dark" id="faq">
+    <div class="container container-narrow">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Common questions</h2>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q">Is it really free forever?</div>
+          <div class="faq-a">Yes. The free plan uses a local model that runs on your machine. No credit card, no trial period — just download and use.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Does it work without internet?</div>
+          <div class="faq-a">The free plan works 100% offline. Pro and Max plans need internet to reach our cloud models, but you can always fall back to local mode.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Can I use my own trained model?</div>
+          <div class="faq-a">Yes! Any GGUF format model works. Click "Browse GGUF" in the Models tab and pick your file. This works on the free plan too.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What languages does it support?</div>
+          <div class="faq-a">Python, JavaScript, TypeScript, Dart, Go, Rust, Java, C/C++, SQL, and more. Especially strong on the Indian startup stack: Django, Flutter, React, Node.js, Supabase, Razorpay.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How is this different from GitHub Copilot?</div>
+          <div class="faq-a">CodeForge works offline, is cheaper, and lets you load your own custom models. Copilot always sends your code to Microsoft servers. With CodeForge free plan, nothing leaves your machine.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Can I pay in INR?</div>
+          <div class="faq-a">Yes. We accept UPI, all Indian debit/credit cards, and net banking via Razorpay. International cards work via Stripe.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Download CTA ── -->
+  <section class="section cta-section" id="download">
+    <div class="container text-center">
+      <h2 class="cta-title">Start coding smarter today</h2>
+      <p class="cta-sub">Free forever. No account needed. Download and run in 2 minutes.</p>
+      <a href="#" class="btn-primary btn-large" id="download-btn">
+        ⬇ Download CodeForge for Windows
+      </a>
+      <div class="cta-note">Windows 10/11 · 64-bit · ~120 MB installer</div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-logo">
+        <span>⚡ CodeForge AI</span>
+      </div>
+      <div class="footer-links">
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="mailto:hello@codeforge.ai">Contact</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+      <div class="footer-copy">© 2026 CodeForge AI. Made in India 🇮🇳</div>
+    </div>
+  </footer>
+
+  <script src="src/main.js"></script>
+</body>
+</html>
